@@ -36,6 +36,11 @@ from keras.layers import Dense, Dropout
 from keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+from keras.utils import to_categorical
+from tensorflow.keras.optimizers import Adam
 ```
 
 ## Data preprocessing
@@ -136,4 +141,15 @@ model.add(Dense(2, activation='softmax'))  # 2 output classes for sentiment
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 ```
 ## Train the model
+```python
 history = model.fit(X_train, y_train, epochs=50, batch_size=2, validation_data=(X_test, y_test))
+```
+
+## Evaluate the model
+```python
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Accuracy: {accuracy:.2f}')
+```
+
+
