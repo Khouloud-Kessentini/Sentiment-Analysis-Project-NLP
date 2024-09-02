@@ -38,9 +38,25 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 ```
 
-# Text pre-processing
+# Data preprocessing
+### Data loading
 ```python
+# loading data
 df = pd.read_csv("/content/full-corpus.csv")
 df
 ```
 <img src="img/1 - initial_data.png" alt="Project Logo" width="2000" height="444"/>
+
+### Columns selection
+```python
+sentiment = df[['Sentiment']].copy()  # sentiment column selection
+sentiment = sentiment[:480]  # selecting a subset of the data rows
+# digitalizing sentiment column
+for i in range(sentiment.shape[0]):
+  if sentiment['Sentiment'][i] == "positive":
+    sentiment['Sentiment'][i] = 0
+  if sentiment['Sentiment'][i] == "negative":
+    sentiment['Sentiment'][i] = 1
+# verifying numerization
+print(sentiment['Sentiment'].unique())
+```
