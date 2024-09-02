@@ -43,3 +43,4 @@ from sklearn.model_selection import train_test_split
 df = pd.read_csv("/content/full-corpus.csv")
 df
 ```
+<img src="img/1 - initial_data.png" alt="Project Logo" width="2000" height="444"/>
