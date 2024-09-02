@@ -68,7 +68,7 @@ reviews.columns = ['reviews']
 ```
 
 ### Tweets before preprocessing
-<img src="img/2 - tweets_before_preprocessing.png" alt="Tweets before preprocessing" width="2000" height="444"/>
+<img src="img/2 - tweets_before_preprocessing.png" alt="Tweets before preprocessing" width="2000" height="200"/>
 
 ### Tweets preprocessing
 ```python
@@ -88,3 +88,17 @@ for i in range(reviews.shape[0]):
   filtered_tokens = [word for word in tokens if word not in stop_words] # remove stop words
   reviews['reviews'][i] = ' '.join(filtered_tokens)
 ```
+
+### Tweets after preprocessing
+<img src="img/3 - tweets_after_preprocessing.png" alt="Tweets after preprocessing" width="2000" height="200"/>
+
+# OneHot Data Encoding
+```python
+# initialize vectorizer
+vectorizer = CountVectorizer()
+# create one-hot matrix
+one_hot_matrix = vectorizer.fit_transform(reviews['reviews'])
+one_hot_matrix_df = pd.DataFrame(one_hot_matrix.toarray(), columns=vectorizer.get_feature_names_out())
+one_hot_matrix_df = one_hot_matrix_df
+```
+<img src="img/4 - tweets_one_hot_encoding.png" alt="Tweets after preprocessing" width="2000" height="400"/>
