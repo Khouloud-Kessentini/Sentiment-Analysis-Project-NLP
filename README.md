@@ -38,7 +38,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 ```
 
-# Data preprocessing
+## Data preprocessing
 ### Data loading
 ```python
 # loading data
@@ -92,7 +92,7 @@ for i in range(reviews.shape[0]):
 ### Tweets after preprocessing
 <img src="img/3 - tweets_after_preprocessing.png" alt="Tweets after preprocessing" width="2000" height="200"/>
 
-# OneHot Data Encoding
+## OneHot Data Encoding
 ```python
 # initialize vectorizer
 vectorizer = CountVectorizer()
@@ -103,20 +103,20 @@ one_hot_matrix_df = one_hot_matrix_df
 ```
 <img src="img/4 - tweets_one_hot_encoding.png" alt="Tweets after preprocessing" width="2000" height="400"/>
 
-# Encode the sentiment column
+## Encode the sentiment column
 ```python
 # Encode the labels (sentiment)
 label_encoder = LabelEncoder()
 encoded_labels = label_encoder.fit_transform(sentiment['Sentiment'])
 categorical_labels = to_categorical(encoded_labels, num_classes=2)
 ```
-# Split the data into train and test data (cross-validation 70-30)
+## Split the data into train and test data (cross-validation 70-30)
 ```python
 # Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(one_hot_matrix_df, 1, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(one_hot_matrix_df, categorical_labels, test_size=0.3, random_state=42)
 ```
 
-# Construct the neural network (Multi-layer perceptron)
+## Construct the neural network (Multi-layer perceptron)
 ```python
 # Build the neural network model
 model = Sequential()
@@ -135,5 +135,5 @@ model.add(Dense(2, activation='softmax'))  # 2 output classes for sentiment
 # Compile the model
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 ```
-# Train the model
+## Train the model
 history = model.fit(X_train, y_train, epochs=50, batch_size=2, validation_data=(X_test, y_test))
