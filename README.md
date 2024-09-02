@@ -140,16 +140,13 @@ model.add(Dense(2, activation='softmax'))  # 2 output classes for sentiment
 # Compile the model
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 ```
-## Train the model
+## Train the model and evaluate it
 ```python
 history = model.fit(X_train, y_train, epochs=50, batch_size=2, validation_data=(X_test, y_test))
-```
 
-## Evaluate the model
-```python
 # Evaluate the model on the test set
 loss, accuracy = model.evaluate(X_test, y_test)
 print(f'Accuracy: {accuracy:.2f}')
 ```
-
+<img src="img/5 - results.png" alt="results.png" width="2000" height="599"/>
 
