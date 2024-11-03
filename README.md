@@ -24,6 +24,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 import re
 import nltk
+import numpy as np
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('words')
@@ -41,6 +42,14 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
+# Download necessary NLTK data
+def download_nltk_data():
+    nltk.download('stopwords')
+    nltk.download('punkt')
+    nltk.download('words')
+# Initialize stop words and English words globally
+stop_words = set(stopwords.words("english"))
+english_words = set(words.words())
 ```
 
 ## Data preprocessing
@@ -54,22 +63,14 @@ df
 
 ### Sentiment column digitalization
 ```python
-sentiment = df[['Sentiment']].copy()  # sentiment column selection
-sentiment = sentiment[:480]  # selecting a subset of the data rows
-# digitalizing sentiment column
-for i in range(sentiment.shape[0]):
-  if sentiment['Sentiment'][i] == "positive":
-    sentiment['Sentiment'][i] = 0
-  if sentiment['Sentiment'][i] == "negative":
-    sentiment['Sentiment'][i] = 1
-# verifying numerization
-print(sentiment['Sentiment'].unique())
-```
-### Tweets data selection
-```python
-reviews = df[['TweetText']].copy()
-reviews = reviews[:480]
-reviews.columns = ['reviews']
+def load_and_preprocess_data(filepath):
+    """Load data from a CSV file, preprocess it, and prepare for training."""
+    df = pd.read_csv(filepath)
+    data = df.loc[df['Sentiment'].isin(['positive', 'negative'])].copy()
+    data.reset_index(drop=True, inplace=True)
+    data['Sentiment'] = data['Sentiment'].replace({'positive': 0, 'negative': 1})
+    data['ProcessedText'] = data['TweetText'].apply(preprocess_sentence)
+    return data
 ```
 
 ### Tweets before preprocessing
@@ -81,17 +82,16 @@ reviews.columns = ['reviews']
 stop_words = set(stopwords.words("english"))
 english_words = set(words.words())
 
-# tweets preprocessing
-for i in range(reviews.shape[0]):
-  reviews['reviews'][i] = reviews['reviews'][i].lower() # convert to lowercase
-  reviews['reviews'][i] = re.sub(r'[^\w\s]', '', reviews['reviews'][i]) # remove punctuation and emojis
-  reviews['reviews'][i] = re.sub(r'\d+', '', reviews['reviews'][i]) # remove numbers
-  reviews['reviews'][i] = re.sub(r'[^a-zA-Z\s]', '', reviews['reviews'][i])
-  reviews['reviews'][i] = re.sub(r'(.)\1{2,}', r'\1', reviews['reviews'][i])
-  tokens = word_tokenize(reviews['reviews'][i])
-  tokens = [word for word in tokens if word in english_words and len(word) > 2] # remove non english words
-  filtered_tokens = [word for word in tokens if word not in stop_words] # remove stop words
-  reviews['reviews'][i] = ' '.join(filtered_tokens)
+def preprocess_sentence(sentence):
+    """Preprocess the input sentence by cleaning, tokenizing, and filtering words."""
+    sentence = sentence.lower()
+    sentence = re.sub(r'[^\w\s]', '', sentence)  # Remove punctuation/emojis
+    sentence = re.sub(r'\d+', '', sentence)  # Remove numbers
+    sentence = re.sub(r'(.)\1{2,}', r'\1', sentence)  # Replace repeated characters
+    tokens = word_tokenize(sentence)
+    tokens = [word for word in tokens if word in english_words and len(word) > 2]  # Keep valid words
+    tokens = [word for word in tokens if word not in stop_words]  # Remove stopwords
+    return ' '.join(tokens)
 ```
 
 ### Tweets after preprocessing
@@ -99,12 +99,19 @@ for i in range(reviews.shape[0]):
 
 ## OneHot Data Encoding
 ```python
-# initialize vectorizer
-vectorizer = CountVectorizer()
-# create one-hot matrix
-one_hot_matrix = vectorizer.fit_transform(reviews['reviews'])
-one_hot_matrix_df = pd.DataFrame(one_hot_matrix.toarray(), columns=vectorizer.get_feature_names_out())
-one_hot_matrix_df = one_hot_matrix_df
+def vectorize_text(data):
+    """Vectorize the processed text data using one-hot encoding."""
+    vectorizer = CountVectorizer()
+    one_hot_matrix = vectorizer.fit_transform(data['ProcessedText'])
+    one_hot_matrix_df = pd.DataFrame(one_hot_matrix.toarray(), columns=vectorizer.get_feature_names_out())
+    return one_hot_matrix_df, vectorizer
+
+def encode_labels(data):
+    """Encode sentiment labels to categorical format for training."""
+    label_encoder = LabelEncoder()
+    encoded_labels = label_encoder.fit_transform(data['Sentiment'])
+    categorical_labels = to_categorical(encoded_labels, num_classes=2)
+    return categorical_labels
 ```
 <img src="img/4 - tweets_one_hot_encoding.png" alt="Tweets after preprocessing" width="2000" height="400"/>
 
