@@ -117,43 +117,79 @@ def encode_labels(data):
 
 ## Encode the sentiment column
 ```python
-# Encode the labels (sentiment)
-label_encoder = LabelEncoder()
-encoded_labels = label_encoder.fit_transform(sentiment['Sentiment'])
-categorical_labels = to_categorical(encoded_labels, num_classes=2)
-```
-## Split the data into train and test data (cross-validation 70-30)
-```python
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(one_hot_matrix_df, categorical_labels, test_size=0.3, random_state=42)
+def encode_labels(data):
+    """Encode sentiment labels to categorical format for training."""
+    label_encoder = LabelEncoder()
+    encoded_labels = label_encoder.fit_transform(data['Sentiment'])
+    categorical_labels = to_categorical(encoded_labels, num_classes=2)
+    return categorical_labels
 ```
 
 ## Construct the neural network (Multi-layer perceptron)
 ```python
-# Build the neural network model
-model = Sequential()
-
-# Input Layer + Hidden Layer 1
-model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
-model.add(Dropout(0.1))  # Dropout to reduce overfitting
-
-# Hidden Layer 2
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.2))  # Dropout to reduce overfitting
-
-# Output Layer
-model.add(Dense(2, activation='softmax'))  # 2 output classes for sentiment
-
-# Compile the model
-model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+def build_model(input_shape):
+    """Build and compile a neural network model."""
+    model = Sequential([
+        Dense(64, activation='relu', input_shape=(input_shape,)),
+        Dropout(0.5),
+        Dense(2, activation='softmax')
+    ])
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    return model
 ```
 ## Train the model and evaluate it
 ```python
-history = model.fit(X_train, y_train, epochs=50, batch_size=2, validation_data=(X_test, y_test))
-
-# Evaluate the model on the test set
-loss, accuracy = model.evaluate(X_test, y_test)
-print(f'Accuracy: {accuracy:.2f}')
+def train_model(model, X_train, y_train, X_test, y_test):
+    """Train the model with the provided training and validation data."""
+    history = model.fit(X_train, y_train, epochs=30, batch_size=2, validation_data=(X_test, y_test))
+    return history
 ```
 <img src="img/5 - results.png" alt="results.png" width="2000" height="599"/>
 
+## Evaluate the model
+```python
+
+def evaluate_model(model, X_test, y_test):
+    """Evaluate the model and print accuracy."""
+    loss, accuracy = model.evaluate(X_test, y_test)
+    print(f'Accuracy: {accuracy:.2f}')
+    return accuracy
+```
+
+## Test the model (make "positive" or "negative" sentiment prediction)
+```python
+def preprocess_and_predict(sentence, model, vectorizer):
+    """Preprocess the sentence and predict sentiment using the trained model."""
+    processed_sentence = preprocess_sentence(sentence)
+    sentence_vector = vectorizer.transform([processed_sentence]).toarray()
+    prediction = model.predict(sentence_vector)
+    predicted_class = np.argmax(prediction, axis=1)[0]
+    return "Positive" if predicted_class == 0 else "Negative"
+
+def interactive_test(model, vectorizer):
+    """Continuously prompt for input and predict sentiment until user stops."""
+    print("Enter a sentence to predict its sentiment ('exit' to quit):")
+    while True:
+        test_sentence = input("Sentence: ")
+        if test_sentence.lower() == 'exit':
+            print("Exiting.")
+            break
+        predicted_sentiment = preprocess_and_predict(test_sentence, model, vectorizer)
+        print(f"The sentiment for the input sentence is: {predicted_sentiment}")
+
+def main(filepath):
+    """Main function to execute the training and prediction process."""
+    download_nltk_data()
+    data = load_and_preprocess_data(filepath)
+    one_hot_matrix_df, vectorizer = vectorize_text(data)
+    categorical_labels = encode_labels(data)
+    X_train, X_test, y_train, y_test = train_test_split(one_hot_matrix_df, categorical_labels, test_size=0.3, random_state=42)
+    model = build_model(input_shape=X_train.shape[1])
+    train_model(model, X_train, y_train, X_test, y_test)
+    evaluate_model(model, X_test, y_test)
+    interactive_test(model, vectorizer)
+
+# Execute the main function with the file path to the dataset
+if __name__ == "__main__":
+    main("/content/full-corpus.csv")
+```
