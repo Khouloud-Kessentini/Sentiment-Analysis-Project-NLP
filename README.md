@@ -83,7 +83,6 @@ stop_words = set(stopwords.words("english"))
 english_words = set(words.words())
 
 def preprocess_sentence(sentence):
-    """Preprocess the input sentence by cleaning, tokenizing, and filtering words."""
     sentence = sentence.lower()
     sentence = re.sub(r'[^\w\s]', '', sentence)  # Remove punctuation/emojis
     sentence = re.sub(r'\d+', '', sentence)  # Remove numbers
@@ -100,14 +99,12 @@ def preprocess_sentence(sentence):
 ## OneHot Data Encoding
 ```python
 def vectorize_text(data):
-    """Vectorize the processed text data using one-hot encoding."""
     vectorizer = CountVectorizer()
     one_hot_matrix = vectorizer.fit_transform(data['ProcessedText'])
     one_hot_matrix_df = pd.DataFrame(one_hot_matrix.toarray(), columns=vectorizer.get_feature_names_out())
     return one_hot_matrix_df, vectorizer
 
 def encode_labels(data):
-    """Encode sentiment labels to categorical format for training."""
     label_encoder = LabelEncoder()
     encoded_labels = label_encoder.fit_transform(data['Sentiment'])
     categorical_labels = to_categorical(encoded_labels, num_classes=2)
@@ -118,7 +115,6 @@ def encode_labels(data):
 ## Encode the sentiment column
 ```python
 def encode_labels(data):
-    """Encode sentiment labels to categorical format for training."""
     label_encoder = LabelEncoder()
     encoded_labels = label_encoder.fit_transform(data['Sentiment'])
     categorical_labels = to_categorical(encoded_labels, num_classes=2)
@@ -140,7 +136,6 @@ def build_model(input_shape):
 ## Train the model and evaluate it
 ```python
 def train_model(model, X_train, y_train, X_test, y_test):
-    """Train the model with the provided training and validation data."""
     history = model.fit(X_train, y_train, epochs=30, batch_size=2, validation_data=(X_test, y_test))
     return history
 ```
@@ -150,7 +145,6 @@ def train_model(model, X_train, y_train, X_test, y_test):
 ```python
 
 def evaluate_model(model, X_test, y_test):
-    """Evaluate the model and print accuracy."""
     loss, accuracy = model.evaluate(X_test, y_test)
     print(f'Accuracy: {accuracy:.2f}')
     return accuracy
@@ -159,7 +153,6 @@ def evaluate_model(model, X_test, y_test):
 ## Test the model (make "positive" or "negative" sentiment prediction)
 ```python
 def preprocess_and_predict(sentence, model, vectorizer):
-    """Preprocess the sentence and predict sentiment using the trained model."""
     processed_sentence = preprocess_sentence(sentence)
     sentence_vector = vectorizer.transform([processed_sentence]).toarray()
     prediction = model.predict(sentence_vector)
@@ -167,7 +160,6 @@ def preprocess_and_predict(sentence, model, vectorizer):
     return "Positive" if predicted_class == 0 else "Negative"
 
 def interactive_test(model, vectorizer):
-    """Continuously prompt for input and predict sentiment until user stops."""
     print("Enter a sentence to predict its sentiment ('exit' to quit):")
     while True:
         test_sentence = input("Sentence: ")
@@ -178,7 +170,6 @@ def interactive_test(model, vectorizer):
         print(f"The sentiment for the input sentence is: {predicted_sentiment}")
 
 def main(filepath):
-    """Main function to execute the training and prediction process."""
     download_nltk_data()
     data = load_and_preprocess_data(filepath)
     one_hot_matrix_df, vectorizer = vectorize_text(data)
@@ -189,7 +180,6 @@ def main(filepath):
     evaluate_model(model, X_test, y_test)
     interactive_test(model, vectorizer)
 
-# Execute the main function with the file path to the dataset
 if __name__ == "__main__":
     main("/content/full-corpus.csv")
 ```
