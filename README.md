@@ -23,6 +23,18 @@ The function $$f$$ is modeled using a deep learning approach, specifically a neu
 
 The model architecture is a **feedforward neural network** with the following components:
  1. Hidden Layers
-  * ReLu activation
+   * ReLu activation
     $$h_1 = \text{ReLU}(W_1x + b_1)$$
-  * Dropout is applied to prevent overfitting.
+   * Dropout is applied to prevent overfitting.
+ 2. Output Layer (Softmax)
+    $$\hat{y} = \text{softmax}(W_2h_1 + b_2)$$
+
+# Metrics
+
+The accuracy is computed as:
+
+$$\text{Accuracy}  = \frac{\text{Number of Correct Predictions}}{\text{Total Predictions}}$$
+
+# Training and Validation
+
+The model trains over 15 epochs, minimizing the loss function and updating weights using Adam's gradient-based optimization.
