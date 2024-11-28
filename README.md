@@ -38,3 +38,22 @@ $$\text{Accuracy}  = \frac{\text{Number of Correct Predictions}}{\text{Total Pre
 # Training and Validation
 
 The model trains over 15 epochs, minimizing the loss function and updating weights using Adam's gradient-based optimization.
+
+
+### How to Run
+
+Clone the repository :
+
+```python
+git clone https://github.com/Khouloud-Kessentini/Sentiment-Analysis-Project-NLP.git
+cd Sentiment-Analysis-Project-NLP
+```
+
+Run the script
+```python
+sentiment_analysis_project.py
+```
+
+### Contributing
+
+Contributions are welcome ! Feel free to open issues or submit pull requests to improve this project.
