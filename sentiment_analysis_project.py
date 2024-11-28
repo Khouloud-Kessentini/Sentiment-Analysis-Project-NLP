@@ -109,4 +109,4 @@ def main(train_filepath, test_filepath):
     interactive_test(model, tokenizer, max_length)
 
 if __name__ == "__main__":
-    main("data/train.csv", "data/test.csv")
+    main("train.csv", "test.csv")
