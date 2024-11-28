@@ -18,3 +18,11 @@ $$
 Here, $$X$$ represents the feature space of text reviews, where each review is a sequence of words transformed into a numerical vector. The set $$Y$$ contains the sentiment labels, where $$Y = 0$$  if the review is negative and  $$Y = 1$$  if the review is positive.
 
 The function $$f$$ is modeled using a deep learning approach, specifically a neural network, which is trained to map from the input text features $$X$$ to the sentiment labels $$Y$$.
+
+# Model Architecture
+
+The model architecture is a **feedforward neural network** with the following components:
+ 1. Hidden Layers
+  * ReLu activation
+    $$h_1 = \text{ReLU}(W_1x + b_1)$$
+  * Dropout is applied to prevent overfitting.
