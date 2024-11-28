@@ -34,7 +34,7 @@ def load_and_preprocess_data(filepath):
     """Load, clean, and preprocess the dataset."""
     # Load dataset
     df = pd.read_csv(filepath, header=None, names=['Class', 'Review'])
-    df = df[:800]
+    df = df[:4000]
     
     # Preprocess the text
     df['ProcessedText'] = df['Review'].apply(preprocess_sentence)
@@ -101,7 +101,7 @@ def main(train_filepath, test_filepath):
     y_test = encode_labels(test_data)
     
     model = build_model(input_dim=len(tokenizer.word_index) + 1, max_length=max_length)
-    model.fit(X_train, y_train, epochs=20, batch_size=16, validation_data=(X_test, y_test))
+    model.fit(X_train, y_train, epochs=12, batch_size=16, validation_data=(X_test, y_test))
     
     loss, accuracy = model.evaluate(X_test, y_test)
     #print(f"Test Accuracy: {accuracy:.2f}")
@@ -110,4 +110,3 @@ def main(train_filepath, test_filepath):
 
 if __name__ == "__main__":
     main("data/train.csv", "data/test.csv")
-
