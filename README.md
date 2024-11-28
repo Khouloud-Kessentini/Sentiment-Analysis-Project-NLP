@@ -1,6 +1,6 @@
 # Sentiment-Analysis-Project-NLP
 
-This project implements a sentiment analysis system that classifies text reviews as either positive or negative using deep learning techniques. The system involves several stages, including data preprocessing, tokenization, model training, and prediction. The core of the project is built using TensorFlow/Keras, with the model employing an embedding layer, dense layers, and dropout layers for effective learning and regularization.
+This project implements a **sentiment analysis system** that classifies text reviews as either **positive** or **negative** using deep learning techniques. The system involves several stages, including data preprocessing, tokenization, model training, and prediction. The core of the project is built using TensorFlow/Keras, with the model employing an embedding layer, dense layers, and dropout layers for effective learning and regularization.
 
 The project covers the following main areas:
  * **Preprocessing**: Cleaning and tokenizing text data, removing stopwords, punctuation, and numbers.
