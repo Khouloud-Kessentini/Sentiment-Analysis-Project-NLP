@@ -18,13 +18,3 @@ $$
 Here, $$X$$ represents the feature space of text reviews, where each review is a sequence of words transformed into a numerical vector. The set $$Y$$ contains the sentiment labels, where $$Y = 0$$  if the review is negative and  $$Y = 1$$  if the review is positive.
 
 The function $$f$$ is modeled using a deep learning approach, specifically a neural network, which is trained to map from the input text features $$X$$ to the sentiment labels $$Y$$.
-
-<img src="img/1 - initial_data.png" alt="Project Logo" width="2000" height="444"/>
-
-<img src="img/2 - tweets_before_preprocessing.png" alt="Tweets before preprocessing" width="2000" height="200"/>
-
-<img src="img/3 - tweets_after_preprocessing.png" alt="Tweets after preprocessing" width="2000" height="200"/>
-
-<img src="img/4 - tweets_one_hot_encoding.png" alt="Tweets after preprocessing" width="2000" height="400"/>
-
-<img src="img/5 - results.png" alt="results.png" width="2000" height="599"/>
