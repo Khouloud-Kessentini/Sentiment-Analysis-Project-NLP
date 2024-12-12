@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout, Embedding, SpatialDropout1D
 from keras.utils import to_categorical
@@ -72,8 +73,6 @@ def build_model(input_dim, max_length):
     model.compile(optimizer=Adam(learning_rate=0.0005), loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
-
-
 def preprocess_and_predict(sentence, model, tokenizer, max_length):
     processed_sentence = preprocess_sentence(sentence)
     sequence = tokenizer.texts_to_sequences([processed_sentence])
@@ -90,6 +89,18 @@ def interactive_test(model, tokenizer, max_length):
         sentiment = preprocess_and_predict(sentence, model, tokenizer, max_length)
         print(f"Predicted Sentiment: {sentiment}")
 
+def evaluate_model(model, X_test, y_test):
+    print("\nEvaluating model...")
+    y_pred = model.predict(X_test)
+    y_pred_classes = np.argmax(y_pred, axis=1)
+    y_true_classes = np.argmax(y_test, axis=1)
+    
+    print("\nClassification Report:")
+    print(classification_report(y_true_classes, y_pred_classes, target_names=['Negative', 'Positive']))
+
+    print("\nConfusion Matrix:")
+    print(confusion_matrix(y_true_classes, y_pred_classes))
+
 def main(train_filepath, test_filepath):
     train_data = load_and_preprocess_data(train_filepath)
     
@@ -99,12 +110,12 @@ def main(train_filepath, test_filepath):
     test_data = load_and_preprocess_data(test_filepath)
     X_test = pad_sequences(tokenizer.texts_to_sequences(test_data['ProcessedText']), maxlen=max_length, padding='post')
     y_test = encode_labels(test_data)
+    print(test_data)
     
     model = build_model(input_dim=len(tokenizer.word_index) + 1, max_length=max_length)
     model.fit(X_train, y_train, epochs=12, batch_size=16, validation_data=(X_test, y_test))
     
-    loss, accuracy = model.evaluate(X_test, y_test)
-    #print(f"Test Accuracy: {accuracy:.2f}")
+    evaluate_model(model, X_test, y_test)
     
     interactive_test(model, tokenizer, max_length)
 
